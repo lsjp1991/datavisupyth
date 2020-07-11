@@ -1,0 +1,62 @@
+Data visualisation using Python in Jupyter Notebook
+
+BAR PLOT
+Question 1: Use the pandas read_csv method to read the csv file into a pandas dataframe
+and upload a screenshot of your dataframe with the actual numbers.
+
+# import the libraries needed
+import numpy as np 
+import pandas as pd
+
+# read the dataset into a pandas dataframe
+df_survey = pd.read_csv('https://cocl.us/datascience_survey_data')
+
+# confirm it has been completed
+print('Dataset on survey downloaded and read into a pandas dataframe!')
+
+# Print the 5 first rows to visualise the dataset
+df_survey.head()
+
+df_survey.rename(columns={'Unnamed: 0':'Data Science Area'},inplace=True) # Let's rename the first column
+df_survey.set_index('Data Science Area', inplace=True) # Set the index to the first column about Data Science Areas
+df_survey.sort_values(by='Very interested', ascending=False, inplace=True) # Sort in descending order of Very interested.
+df_survey.head() # print the dataframe
+
+Question 2: Use the artist layer of Matplotlib to replicate the bar chart seen in the instructions
+to visualize the percentage of the respondents' interest in the different data science topics surveyed.
+
+# Magic function for our matplotlib graphs will be included in your notebook, next to the code.
+%matplotlib inline
+
+# Import the different libraries needed
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+
+# Adjusts the style to emulate ggplo
+mpl.style.use('ggplot')
+
+# Create the plot and set the parameters
+ax = df_percent.plot(kind='bar', figsize=(20, 8), width=0.8, color=['#5cb85c', '#5bc0de', '#d9534f'])
+
+# Get ride of borders
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
+ax.spines['left'].set_visible(False)
+
+# Adjust fontsize of labels
+plt.xticks(fontsize = 14)
+plt.yticks([])
+
+# Annotate bars with percentage
+for p in ax.patches:
+    width, height = p.get_width(), p.get_height()
+    x, y = p.get_xy()
+    ax.annotate('{:.2f}%'.format(height), (x, y + height + 0.01),fontsize = 14)
+
+# Adjust and set parameters of legend and title
+ax.legend(labels=df_percent.columns, loc='upper right',fontsize = 14 )
+ax.set_title('Respondants interest in Data Science areas', fontsize=16)
+
+# Show the plot
+plt.show()
