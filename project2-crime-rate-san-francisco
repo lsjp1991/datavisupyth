@@ -1,0 +1,55 @@
+Data visualisation using Python in Jupyter Notebook 
+
+(labs questions from IBM Data Science Professional Certificate)
+
+CHLOROPLET MAP
+Question 1: Convert the San Francisco dataset, which you can also find here, https://cocl.us/sanfran_crime_dataset, into a pandas dataframe,like the one shown in the instructions, that represents the total number of crimes in each neighborhood.
+# import the libraries needed
+import numpy as np 
+import pandas as pd
+
+# read the dataset into a pandas dataframe
+df_SF = pd.read_csv('https://cocl.us/sanfran_crime_dataset')
+
+# confirm it has been completed
+print('Dataset on crime rate in San Francisco downloaded and read into a pandas dataframe!')
+
+df_SF.head()
+
+# Let's group by district
+d=df_SF[["PdDistrict", "Location"]]
+df_Neighbourhood = d.groupby("PdDistrict").count()
+df_Neighbourhood.index.name='Neighbourhood'
+df_Neighbourhood.rename(columns={'PdDistrict':'Neighbourhood','Location':'Count'}, inplace=True)
+df_Neighbourhood= df_Neighbourhood.reindex(["CENTRAL", "NORTHERN", "PARK", "SOUTHERN", "MISSION", "TENDERLOIN", "RICHMOND", "TARAVAL", "INGLESIDE", "BAYVIEW"])
+df_Neighbourhood=df_Neighbourhood.reset_index()
+
+df_Neighbourhood
+
+!conda install -c conda-forge folium=0.5.0 --yes
+import folium
+
+print('Folium installed and imported!')
+
+!wget --quiet https://cocl.us/sanfran_geojson
+!pip install wget
+
+print('SF_geo file downloaded!')
+
+SF_GEO=r'sanfran_geojson' # # geojson file
+
+# Define San Francisco Map with folium.Map
+SF_Map=folium.Map(location=[37.7749, -122.4194], zoom_start=12)
+
+# Choropleth
+SF_Map.choropleth(
+    geo_data=SF_GEO,
+    data=df_Neighbourhood,
+    columns=['Neighbourhood', 'Count'],
+    key_on='feature.properties.DISTRICT',
+    fill_color='YlOrRd', 
+    fill_opacity=0.7, 
+    line_opacity=0.2,
+    legend_name='Crime Rate in San Francisco'
+)
+SF_Map
